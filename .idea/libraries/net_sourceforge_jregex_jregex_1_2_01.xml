@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="net.sourceforge.jregex:jregex:1.2_01" type="repository">
+    <properties maven-id="net.sourceforge.jregex:jregex:1.2_01" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/net/sourceforge/jregex/jregex/1.2_01/jregex-1.2_01.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
