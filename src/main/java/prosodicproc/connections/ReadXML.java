@@ -4,6 +4,7 @@ package prosodicproc.connections; /**
 
 
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.stereotype.Indexed;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -23,14 +24,14 @@ import static org.apache.commons.io.FilenameUtils.removeExtension;
 
 
 public class ReadXML {
-    public static HashMap<Integer, String> IndexedSenteces;
+    public static List<String> IndexedSenteces;
     // static HashMap<String, ArrayList<String>> speakersFormatted= new HashMap<>();
     static HashMap<String, ArrayList<String>> speakers = new HashMap<>();
     static ArrayList<String> currentText;
     static File[] listOfSentences;
     static File file;
-  public  static String category;
-  public static String xml_Id;
+    public  static String category;
+    public static String xml_Id;
 
     private static File ListOfSentenceFiles;
 
@@ -72,15 +73,15 @@ public class ReadXML {
             audio.readAudio();
 
 
-            String fileName = "C:\\Users\\Sibora\\Desktop\\Oral_Argument\\Edited_Oral_Argument\\07_542\\";
+            String fileName = "C:\\Users\\sibora\\Desktop\\Oral_Argument\\Edited_Oral_Argument\\07_542\\";
 //            OpinonTextGrids opinionTG = new OpinonTextGrids();
 //            ArgumentTextGrids argumentTG = new ArgumentTextGrids();
 
             NodeList caseFolderNL = doc.getElementsByTagName("caseFolder");
             Node CaseFolderNode = caseFolderNL.item(0);//starting from argument case index of the item needs to be changed later for the opinion case item=1
             Element CaseFolder = (Element) CaseFolderNode;
-             xml_Id = CaseFolder.getAttribute("id");
-            System.out.println("xml_Id: " + xml_Id);
+            xml_Id = CaseFolder.getAttribute("id");
+            //System.out.println("xml_Id: " + xml_Id);
 
             //
             PrintWriter writer;
@@ -91,7 +92,7 @@ public class ReadXML {
                 Node CaseNode = NL.item(counter);
                 Element Case = (Element) CaseNode;
 
-                System.out.println("Category:" + Case.getAttribute("category"));
+                //  System.out.println("Category:" + Case.getAttribute("category"));
 //
 //decide which interval is being read in the stringbuffer
 
@@ -107,7 +108,7 @@ public class ReadXML {
                     out.append("Object class = \"TextGrid\"" + "\n");
 
                 } else if (Case.getAttribute("category").equals("opinion")) {
-                    System.out.println("opinion interval");
+                    //  System.out.println("opinion interval");
                     out = new StringBuffer();
                     out0 = new StringBuffer();
                     sb = new StringBuffer();
@@ -129,7 +130,7 @@ public class ReadXML {
                 Element FirstTurnElement = (Element) firstTurnNode;
                 Element ActualTurnElement = (Element) firstTurnNode;
                 // System.out.println("Length: "+turnNodeList.getLength());
-                IndexedSenteces = new HashMap<>();// Used for storing all the sentences of all speakers in a map
+                IndexedSenteces = new ArrayList<>();// Used for storing all the sentences of all speakers in a map
 
                 //
                 for (int turnCounter = 0; turnCounter < turnNodeList.getLength(); turnCounter++) {
@@ -149,24 +150,20 @@ public class ReadXML {
 
 
                                 File file2 = new File(file + "\\" + (c + 1) + "_" + SpeakerName + "\\" + (c + 1) + "_" + SpeakerName + ".txt");
-                                System.out.println("file2" + file2.getParentFile());
+                                //  System.out.println("file2" + file2.getParentFile());
                                 if (file2.getParentFile().mkdir()) {
                                     file2.createNewFile();
-                                    System.out.println("New file inside a file was created" + file2.getParentFile());
+                                    // System.out.println("New file inside a file was created" + file2.getParentFile());
                                 }
-                                file.getParentFile().mkdirs();
-                                file2.getParentFile().mkdirs();
 
                                 //  writer = new PrintWriter(file);
                                 PrintWriter writer2 = new PrintWriter(file2);
                                 writer2.append(tempNode.getTextContent());
                                 writer2.flush();
 
-                                // writer.append(tempNode.getTextContent());
-                                //System.out.println("inside writer: "+ writer.toString());
-                                // writer.flush();
 
-                                IndexedSenteces.put((c + 1), SpeakerName);
+
+                                IndexedSenteces.add(SpeakerName);
                                 c++;
                             }
                         }
@@ -174,18 +171,17 @@ public class ReadXML {
                 }
                 listOfSentences = new File[0];
                 listOfSentences = file.listFiles();
-//                for(Object o:listOfSentences){
-//                    System.out.println("in list of sentences"+ o.toString());
-//                }
+
+
                 //nameCorrespondingAudioFile();
 
 //for(int i =0; i< turnNodeList.getLength())
 
-                System.out.println("After function");
+                // System.out.println("After function");
 
                 NodeList textNodeList = Case.getElementsByTagName("text");
-                System.out.println("textNodelist length: " + textNodeList.getLength());
-                System.out.println("");
+                //System.out.println("textNodelist length: " + textNodeList.getLength());
+                //  System.out.println("");
                 Node firstTextNode = textNodeList.item(0);
                 Element FirstTextElement = (Element) firstTextNode;
 
@@ -355,15 +351,19 @@ public class ReadXML {
                     //if argument audio file is selected
                     File argumentFolder = new File(audio.getInputFile().getParent() + "\\argument\\");
                     if (!argumentFolder.exists()) {
-                        argumentFolder.mkdir();
+                        argumentFolder.mkdirs();
                     }
                     PrintWriter textGrid = new PrintWriter(argumentFolder + "\\" + removeExtension(audio.getInputFile().getName()) + ".TextGrid");
                     textGrid.append(out0);
                     textGrid.close();
 //                    argumentTG.insertArgumentTextGridToDB(xml_Id, new ByteArrayInputStream(out0.toString().getBytes(StandardCharsets.UTF_8)), out0, audio.getInputFile(), argumentFolder + "\\");
                     total_offset.setLength(0);
-                    praatFuncAudioToSentence(argumentFolder + "\\", new File("C:\\Users\\Sibora\\Desktop\\Oral_Argument\\Edited_Oral_Argument\\07_542\\argumentSentences\\" + "\\"));
-                    System.out.println("arguement folder: " + argumentFolder);
+                    if (! new File("C:\\Users\\sibora\\Desktop\\Oral_Argument\\Edited_Oral_Argument\\07_542\\argumentSentences\\" + "\\").exists()) {
+                        new File("C:\\Users\\sibora\\Desktop\\Oral_Argument\\Edited_Oral_Argument\\07_542\\argumentSentences\\" + "\\").mkdirs();
+                        //   System.out.println("New file was created");
+                    }
+                    praatFuncAudioToSentence(argumentFolder + "\\", new File("C:\\Users\\sibora\\Desktop\\Oral_Argument\\Edited_Oral_Argument\\07_542\\argumentSentences\\" + "\\"));
+                    //  System.out.println("arguement folder: " + argumentFolder);
 
                 } else if (counter == 1 && removeExtension(audio.getInputFile().getName()).contains("o")) //if opinion audio file is selected
                 {
@@ -375,10 +375,16 @@ public class ReadXML {
                     PrintWriter textGrid = new PrintWriter(opinionFolder + "\\" + removeExtension(audio.getInputFile().getName()) + ".TextGrid");
                     textGrid.append(out0);
                     textGrid.close();
-                  //  opinionTG.insertOpionionTextGridToDB(xml_Id, new ByteArrayInputStream(out0.toString().getBytes(StandardCharsets.UTF_8)), out0, audio.getInputFile(), opinionFolder + "\\");
-                    praatFuncAudioToSentence(opinionFolder + "\\", new File("C:\\Users\\Sibora\\Desktop\\Oral_Argument\\Edited_Oral_Argument\\07_542\\opinionSentences\\" + "\\"));
+                    //  opinionTG.insertOpionionTextGridToDB(xml_Id, new ByteArrayInputStream(out0.toString().getBytes(StandardCharsets.UTF_8)), out0, audio.getInputFile(), opinionFolder + "\\");
+
+                    if (! new File("C:\\Users\\sibora\\Desktop\\Oral_Argument\\Edited_Oral_Argument\\07_542\\opinionSentences\\" + "\\").exists()) {
+                        new File("C:\\Users\\sibora\\Desktop\\Oral_Argument\\Edited_Oral_Argument\\07_542\\opinionSentences\\" + "\\").mkdirs();
+                        //  System.out.println("New file was created");
+                    }
                     total_offset.setLength(0);
-                    System.out.println("opinion FOlder: " + opinionFolder);
+                    praatFuncAudioToSentence(opinionFolder + "\\", new File("C:\\Users\\sibora\\Desktop\\Oral_Argument\\Edited_Oral_Argument\\07_542\\opinionSentences\\" + "\\"));
+
+                    //  System.out.println("opinion FOlder: " + opinionFolder);
                 }
             } //big for open again
 
@@ -392,20 +398,20 @@ public class ReadXML {
         //File praat_output = new File("C:\\Users\\Sibora\\Desktop\\Oral_Argument\\Edited_Oral_Argument\\07_542\\AudioSntcPraat2\\");
         String[] command = {"cmd.exe", "/c", "Praat.exe --run ExtractFromLongSound_fromdirectory.praat \"" + path + "\\\"" + " \"" + praat_output + "\\\\\""};
         ProcessBuilder probuilder = new ProcessBuilder(command);
-        probuilder.directory(new File("C:\\Users\\Sibora\\Desktop\\"));
+        probuilder.directory(new File("C:\\Users\\sibora\\Desktop\\"));
         Process process = probuilder.start();
         //Read out dir output
         InputStream is = process.getInputStream();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         String line;
-        System.out.printf("Output of running %s is:\n",
-                Arrays.toString(command));
+        // System.out.printf("Output of running %s is:\n",
+        // Arrays.toString(command));
         while ((line = br.readLine()) != null) {
-            System.out.println(line);
+            //   System.out.println(line);
             try {
                 int exitValue = process.waitFor();
-                System.out.println("\n\nExit Value is " + exitValue);
+                // System.out.println("\n\nExit Value is " + exitValue);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -419,48 +425,43 @@ public class ReadXML {
     }
 
     public static void nameCorrespondingAudioFile(File audioSegments) throws Exception {
-        System.out.println("audioSegments: " + audioSegments);
+        List<File> fileList = new ArrayList<>();
+
+
         File[] listOfAudioSegments = audioSegments.listFiles();
-        //System.out.println("number of listofaudiosegments: " + listOfAudioSegments.length);
-        if (audioSegments.mkdir()) {
-            System.out.println("New file was created");
-        }
 
-        for (Map.Entry<Integer, String> entry : IndexedSenteces.entrySet()) {
-            System.out.println("Name of audio file " + entry.getKey());
+        for(int a=14; a<listOfAudioSegments.length; a++ ){
+//
+            for (File f : listOfSentences) {
+//
+                // System.out.println("text"+f.getAbsolutePath());
+                if (Integer.parseInt(f.getName().replaceAll("[a-zA-Z_.]", ""))== Integer.parseInt(listOfAudioSegments[(a)].getName().replaceAll("[a-zA-Z_.]", ""))) {
+                    //  System.out.println("compare"+ a+" "+listOfAudioSegments[(a)].getName()+ "txt file "+f.getName() );
+                    listOfAudioSegments[a].renameTo(new File(f.getAbsoluteFile() + "\\"  + f.getName() + ".wav"));
+                    //  System.out.println("Writing audiossss" +f.getAbsoluteFile() + "\\" + f.getName().replaceAll("[a-zA-Z_.]", "") + "_" + f.getName() + ".wav");
+                    getWordsTextGrid(new File(f.getAbsoluteFile() + "\\"  + f.getName() + ".txt"), new File(f.getAbsoluteFile() + "\\"  + f.getName() + ".wav"));
 
-            for (int j = 1; j <= IndexedSenteces.size(); j++) {
-                if (listOfSentences[(j - 1)].mkdir()) {
-                    System.out.println("new audio file created  ");
-                }
-                if (entry.getKey().toString().equals(listOfAudioSegments[(j - 1)].getName().replaceAll("[a-zA-Z_.]", ""))) {
-                    for (File f : listOfSentences) {
-
-                        if (entry.getKey().toString().equals(f.getName().replaceAll("[a-zA-Z_.]", ""))) {
-                            listOfAudioSegments[j - 1].renameTo(new File(f.getAbsoluteFile() + "\\" + entry.getKey() + "_" + entry.getValue() + ".wav"));
-                            System.out.println("Writing audiossss" + f.getAbsoluteFile() + "\\" + entry.getKey() + "_" + entry.getValue() + ".wav");
-                            getWordsTextGrid(new File(f.getAbsoluteFile() + "\\" + entry.getKey() + "_" + entry.getValue() + ".txt"), new File(f.getAbsoluteFile() + "\\" + entry.getKey() + "_" + entry.getValue() + ".wav"));
-                           // fillSpeakersTable(category, f.getAbsoluteFile() + "\\" + entry.getKey() + "_" + entry.getValue() + ".wav", f.getAbsolutePath(), null, FilenameUtils.removeExtension(f.getName()));
-                        }
-                    }
                 }
             }
         }
     }
 
 
+
     public static void getWordsTextGrid(File textFile, File audioFile) throws Exception {
 
         runMAUSBASIC rb = new runMAUSBASIC(textFile, audioFile);
 
-        System.out.println("inside runMausbasic");
+        // System.out.println("inside runMausbasic");
         rb.getTextGrid();
-        sendFilesTo_SentenceToWord(rb.get_runMAUSBASICFile());
+        if(rb.get_runMAUSBASICFile().exists()) {
+            sendFilesTo_SentenceToWord(rb.get_runMAUSBASICFile());
+        }
     }
 
     public static void sendFilesTo_SentenceToWord(File FileDirectory) throws Exception {
-       // System.out.println("Parenttt: " + FileDirectory.toString());
-         ListOfSentenceFiles = new File(FileDirectory.getParentFile().getParentFile().getPath() + "\\" + "ListOfSentenceFiles" + "\\");
+
+        ListOfSentenceFiles = new File(FileDirectory.getParentFile().getParentFile().getPath() + "\\" + "ListOfSentenceFiles" + "\\");
         if (!ListOfSentenceFiles.exists()) {
             ListOfSentenceFiles.mkdirs();
         }
@@ -473,11 +474,11 @@ public class ReadXML {
                 }
                 if (f.getName().endsWith(".wav")) {
                     f.renameTo(new File(ListOfSentenceFiles.getPath() + "\\" + FilenameUtils.removeExtension(f.getName()) + "\\" + f.getName()));
-                    System.out.println("newoutput wav: " + (new File(ListOfSentenceFiles.getPath() + "\\" + FilenameUtils.removeExtension(f.getName()) + "\\" + f.getName())));
+                    // System.out.println("newoutput wav: " + (new File(ListOfSentenceFiles.getPath() + "\\" + FilenameUtils.removeExtension(f.getName()) + "\\" + f.getName())));
                 }
                 if (f.getName().endsWith("TextGrid")) {
                     f.renameTo(new File(ListOfSentenceFiles.getPath() + "\\" + FilenameUtils.removeExtension(f.getName()) + "\\" + f.getName()));
-                    System.out.println("newoutput textgrid: " + (new File(ListOfSentenceFiles.getPath() + "\\" + FilenameUtils.removeExtension(f.getName()) + "\\" + f.getName())));
+                    //  System.out.println("newoutput textgrid: " + (new File(ListOfSentenceFiles.getPath() + "\\" + FilenameUtils.removeExtension(f.getName()) + "\\" + f.getName())));
                 }
             }
         }
@@ -488,34 +489,14 @@ public class ReadXML {
         SentenceToWordPraat stw = new SentenceToWordPraat(ListOfSentenceFiles, wordsFile);
 
         File csvPathofWordsPitch = stw.getcsvPathofWordsPitch();
-        System.out.println("returned file "+ stw.getcsvPathofWordsPitch());
+        //System.out.println("pitch file "+ stw.getcsvPathofWordsPitch());
         GetTimesForEachWord gt = new GetTimesForEachWord(csvPathofWordsPitch.getParentFile().getParentFile(),ListOfSentenceFiles);
-        System.out.println("csv path: "+ csvPathofWordsPitch.getParentFile().getParentFile());
-        System.out.println("sentenceFiles path:  "+ ListOfSentenceFiles);
+        //  System.out.println("min_max path: "+ gt.getFile());
+        // System.out.println("sentenceFiles path:  "+ ListOfSentenceFiles);
 
-       //\m fillTheDb fbd= new fillTheDb(csvPathofWordsPitch.getParentFile().getParentFile());
+        fillTheDb fbd= new fillTheDb(csvPathofWordsPitch.getParentFile().getParentFile());
 
     }
-
-//    public static void fillSpeakersTable(String category, String audioPath, String txtPath, String[] words, String speakerID) {
-//        Database db = new Database();
-//        try {
-//            PreparedStatement ps = db.connect().prepareStatement("CREATE TABLE IF NOT EXISTS sentence (category text , audiopath text PRIMARY KEY , txtPath text, words text, speakerid text );\n" +
-//                    "INSERT INTO sentence VALUES(?,?,?,?,?)");
-//            System.out.println("Sentence table");
-//            ps.setString(1, category);
-//            ps.setString(2, audioPath);
-//            ps.setString(3, txtPath);
-//            ps.setString(4, String.valueOf(words));
-//            ps.setString(5, speakerID);
-//            System.out.println("speaker: " + ps.toString());
-//            ps.executeUpdate();
-//            ps.close();
-//            //fis.close();
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
 
 }

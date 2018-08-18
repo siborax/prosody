@@ -1,15 +1,23 @@
 package prosodicproc.connections;
 
-import jdk.internal.org.xml.sax.InputSource;
-import jdk.internal.org.xml.sax.SAXException;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
-import javax.ws.rs.GET;
-import javax.xml.bind.JAXBContext;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
 import java.net.*;
@@ -77,7 +85,7 @@ public class runMAUSBASIC {
             }
         }
             Document doc = Jsoup.parse(stringB.toString());
-            System.out.println("output doc: "+doc.select(":containsOwn(text)").first().ownText());
+//            System.out.println("output doc: "+doc.select(":containsOwn(text)").first().ownText());
             String link = doc.select(":containsOwn(text)").first().ownText();
             System.out.println(link);
 

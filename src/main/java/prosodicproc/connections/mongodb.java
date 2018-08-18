@@ -12,17 +12,20 @@ public class mongodb {
 
     DB database;
     MongoClient mongoClient;
+    String category;
     public void SetDb() throws UnknownHostException {
          mongoClient = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
         database = mongoClient.getDB("mongoDB");
         //boolean collectionExists = database.collectionExists("ProsodySentences");
-        if(!database.collectionExists("ProsodySentences")){
-            database.createCollection("ProsodySentences",null );
+
+       // if(!database.collectionExists("ProsodySentences")){
+            database.createCollection("ProsodySentences" ,null );
             //new BasicDBObject("capped", false)
 
 
-        }
-        emptyDB();
+     //   }
+        //emptyDB();
+
 
 
 
@@ -47,4 +50,7 @@ public class mongodb {
         database.getCollection("ProsodySentences").drop();
     }
 
+    public void setCategory(String category) {
+       this.category= category;
+    }
 }

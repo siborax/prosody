@@ -29,6 +29,7 @@ public fillTheDb(File inputFile) throws IOException, JSONException {
 
     public fillTheDb(File opinionFile, File argumentFile) throws IOException, JSONException {
         mongodb mdb = new mongodb();
+      //  mdb.setCategory(ReadXML.category);
         mdb.SetDb();
 
 
@@ -125,8 +126,9 @@ if(argumentFile!=null) {
                 String[] arrayMinMax = lineMinMax.split(",");
                 if(array[0].equals(arrayMinMax[0])){
 //            if(array[0].contains(minMaxWord.get(0))){
-
-                pitch = array[2];
+//String pValue = array[2];
+                if(array.length>=2){
+                        pitch = array[2];
                     System.out.println("array0:" + array[0]);
                     System.out.println(array[0] + " " + array[2]);
                     System.out.println("word " + arrayMinMax[0]);
@@ -137,7 +139,22 @@ if(argumentFile!=null) {
                     arrayWord.put("pitch", array[2]);
                     arrayWord.put("start", arrayMinMax[1]);
                     arrayWord.put("end", arrayMinMax[2]);
-                }}
+                }
+                else{
+
+                    pitch = String.valueOf(0.0);
+                    System.out.println("array0:" + array[0]);
+                    System.out.println(array[0] + " " + pitch);
+                    System.out.println("word " + arrayMinMax[0]);
+
+                    System.out.println("pitch" + pitch);
+
+                    arrayWord.put("word", arrayMinMax[0]);
+                    arrayWord.put("pitch", pitch);
+                    arrayWord.put("start", arrayMinMax[1]);
+                }
+                }
+            }
 
                 arrayWords.put(arrayWord);
 
