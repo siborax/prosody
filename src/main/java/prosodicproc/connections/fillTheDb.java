@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.*;
 
+import com.google.gson.JsonObject;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,12 +38,16 @@ public fillTheDb(File inputFile) throws IOException, JSONException {
         String xmlId = ReadXML.xml_Id;
         fileName.put("filename", xmlId);
         fileName.put("category",ReadXML.category);
+//        fileName.put("speakersOfCase",ReadXML.speakersPerCase);
 
 //opinion Files
         if(opinionFile!=null){
         File[] sentences = opinionFile.listFiles();
         JSONObject sentencesArray = new JSONObject(); // takes the name of the sentence folder, example: 1_john_g_roberts_jr
         JSONArray sentencesOpinion = new JSONArray();
+
+        JSONObject speakerObject ;
+        JSONArray speakersList = new JSONArray();
         for (File sentence : sentences) {//sentence is C:\Users\Sibora\Desktop\Oral_Argument\Edited_Oral_Argument\07_542\OpinionFolder\pitchForWords\1_john_g_roberts_jr
             System.out.println("sent:" + sentence);
             ArrayList<File> csvFiles = new ArrayList<>();
@@ -66,6 +71,15 @@ public fillTheDb(File inputFile) throws IOException, JSONException {
         }
 
         fileName.put("sentencesOpinion", sentencesOpinion);
+        for(int s=0;s<ReadXML.speakersPerCase.size();s++){
+            speakerObject= new JSONObject();
+            speakerObject.put("name",ReadXML.speakersPerCase.get(s).name);
+            speakerObject.put("type",ReadXML.speakersPerCase.get(s).type);
+            speakerObject.put("id",ReadXML.speakersPerCase.get(s).id);
+            speakersList.put(speakerObject);
+        }
+
+        fileName.put("speakersOfCase",speakersList);
     }
 if(argumentFile!=null) {
     File[] sentencesArgument = argumentFile.listFiles();
@@ -80,17 +94,14 @@ if(argumentFile!=null) {
 
         //    ArrayList<DataFormat> df = new ArrayList<DataFormat>();
         File[] insideSentence = sentence.listFiles();// insideSentence is min_max.csv or 1_john_g_roberts_jr.csv
-        if (insideSentence != null) {
+        if (insideSentence.length >1) {
             System.out.println("0" + insideSentence[0]);
             System.out.println("1" + insideSentence[1]);
             sentenceObject.put("words", combineFiles(insideSentence[1], insideSentence[0]));
 //                fileName.put("sentences", sentencesArrayArgument);
             sentencessArgument.put(sentenceObject);
-
         }
-
     }
-
     fileName.put("sentencesArgument", sentencessArgument);
 }
 

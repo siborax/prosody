@@ -35,7 +35,7 @@ this.outputParent=wordsFile.getParentFile();
         if(!praat_output.exists()){
             praat_output.mkdirs();
         }
-        System.out.println("praat output: "+praat_output);
+//        System.out.println("praat output: "+praat_output);
         scriptRun_SentenceToWordPraat(path,praat_output);
         getMaxPitch(praat_output);
 
@@ -56,8 +56,8 @@ this.outputParent=wordsFile.getParentFile();
         InputStreamReader isr = new InputStreamReader(is);
         BufferedReader br = new BufferedReader(isr);
         String line;
-        System.out.printf("Output of scriptRun_SentenceToWordPraat running %s is:\n",
-                Arrays.toString(command));
+//        System.out.printf("Output of scriptRun_SentenceToWordPraat running %s is:\n",
+//                Arrays.toString(command));
         while ((line = br.readLine()) != null) {
             System.out.println(line);
             try {
@@ -85,13 +85,22 @@ this.outputParent=wordsFile.getParentFile();
 
         //create the folder to output the csv with highest frequency(pitch value) of each word in each sentence
          File outputFolder= new File(outputParent+"\\"+"pitchForWords"+"\\"+FilenameUtils.removeExtension(output.getName()));
-    if(!outputFolder.exists())
-        {
-        outputFolder.mkdirs();
-        }
+    if(!outputFolder.getParentFile().exists()) {
+        outputFolder.getParentFile().mkdirs();
+    }
 
-         outputText = outputFolder+"\\"+FilenameUtils.removeExtension(output.getName())+".csv";
-        System.out.println("outputText_getMaxPitch"+outputText);
+
+        if(!outputFolder.exists()){
+            outputFolder.mkdirs();
+    }
+
+
+       //File outputfile = new File(outputFolder+"\\"+FilenameUtils.removeExtension(output.getName())+".csv");
+//        if (!outputfile.exists()) {
+       // BufferedReader bReader = new BufferedReader(new FileReader(outputFolder+"\\"+FilenameUtils.removeExtension(output.getName())+".csv"));
+        outputText=outputFolder+"\\"+FilenameUtils.removeExtension(output.getName())+".csv";
+
+//        System.out.println("outputText_getMaxPitch"+outputText);
 
         //  String[] command = {"cmd.exe", "/c", "Praat.exe --run ExtractFromLongSound_fromdirectory_Words.praat \"" + path + "\""+" \"" + praat_output+ "\"" };
         String[] command = {"cmd.exe", "/c", "Praat.exe --run scriptWithFilePath_AllCSV.praat \"" +output +"\" "+"\"" +outputText+"\""};
@@ -110,7 +119,7 @@ this.outputParent=wordsFile.getParentFile();
             System.out.println(line);
             try {
                 int exitValue = process.waitFor();
-                System.out.println("\n\nExit Value is " + exitValue);
+//                System.out.println("\n\nExit Value is " + exitValue);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -119,6 +128,7 @@ this.outputParent=wordsFile.getParentFile();
 //        System.out.println("text sended "+ outputText);
 //        System.out.println("wordsFile "+ wordsFile);
     }
+
     public static File getcsvPathofWordsPitch(){
       return  new File(outputText);//Path of csv
     }

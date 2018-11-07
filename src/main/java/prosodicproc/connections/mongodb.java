@@ -40,6 +40,7 @@ public class mongodb {
         if(!database.collectionExists("ProsodySentences")){
 
         }
+        //if(database.getCollectionNames("ProsodySentences").contains()){}
          database.getCollection("ProsodySentences").insert(doc);
         System.out.println("db: "+database.getCollection("ProsodySentences").find(doc));
     }
